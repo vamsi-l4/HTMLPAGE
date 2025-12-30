@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fire Emergency Location</title>
+</head>
+<body>
+  <h2>📍 Sending Location...</h2>
+
+  <script>
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const data = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          time: new Date().toISOString()
+        };
+
+        fetch("http://10.4.9.153:5000", {
+          method: "POST",
+          body: JSON.stringify(data)
+        });
+
+        document.body.innerHTML = "<h2>✅ Location Sent</h2>";
+      },
+      error => {
+        alert("Location permission denied");
+      }
+    );
+  </script>
+</body>
+</html>
