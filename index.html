@@ -1,31 +1,36 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-  <title>Fire Emergency Location</title>
+  <title>Fire GPS Sender</title>
 </head>
 <body>
-  <h2>📍 Sending Location...</h2>
+<h2>📡 Sending GPS location...</h2>
 
-  <script>
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const data = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          time: new Date().toISOString()
-        };
+<script>
+navigator.geolocation.getCurrentPosition(
+  pos => {
+    const payload = {
+      latitude: pos.coords.latitude,
+      longitude: pos.coords.longitude,
+      accuracy: pos.coords.accuracy,
+      time: new Date().toISOString()
+    };
 
-        fetch("http://10.4.9.153:5000", {
-          method: "POST",
-          body: JSON.stringify(data)
-        });
+    fetch("http://10.4.9.153:5000", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-        document.body.innerHTML = "<h2>✅ Location Sent</h2>";
-      },
-      error => {
-        alert("Location permission denied");
-      }
-    );
-  </script>
+    document.body.innerHTML = "<h2>✅ Location sent successfully</h2>";
+  },
+  err => {
+    alert("❌ Enable GPS permission and reload");
+  },
+  { enableHighAccuracy: true }
+);
+</script>
+
 </body>
 </html>
