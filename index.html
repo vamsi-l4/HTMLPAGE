@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Fire Location Sender</title>
+  <title>Fire Location Service</title>
 </head>
 <body>
 
-<h2>Fire Location Service</h2>
+<h2>🔥 Fire Location Service</h2>
 <button onclick="sendLocation()">Enable & Send Location</button>
-
 <p id="status"></p>
 
 <script>
@@ -18,32 +17,26 @@ function sendLocation() {
   }
 
   navigator.geolocation.getCurrentPosition(
-    success,
-    error,
-    { enableHighAccuracy: true }
+    pos => {
+      fetch("/api/location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          time: new Date().toISOString()
+        })
+      })
+      .then(() => {
+        document.getElementById("status").innerText =
+          "📍 Location sent successfully";
+      });
+    },
+    err => {
+      document.getElementById("status").innerText =
+        "❌ Location permission denied";
+    }
   );
-}
-
-function success(position) {
-  const data = {
-    latitude: position.coords.latitude,
-    longitude: position.coords.longitude,
-    time: new Date().toISOString()
-  };
-
-  fetch("http://10.4.9.153:5000", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-
-  document.getElementById("status").innerText =
-    "📍 Location sent successfully";
-}
-
-function error(err) {
-  document.getElementById("status").innerText =
-    "❌ GPS error: " + err.message;
 }
 </script>
 
